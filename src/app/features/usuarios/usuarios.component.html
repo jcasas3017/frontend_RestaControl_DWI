@@ -1,0 +1,238 @@
+﻿
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">RESTA CONTROL / ADMINISTRACIÓN</p>
+      <h1>Gestión de usuarios</h1>
+      <p class="subtitle">Administra las cuentas, los roles y el estado de acceso.</p>
+    </div>
+
+    <button class="primary-button" type="button" (click)="nuevoUsuario()">
+      + Nuevo usuario
+    </button>
+  </header>
+
+  @if (mensaje) {
+    <div class="notice success" role="status">{{ mensaje }}</div>
+  }
+
+  @if (error) {
+    <div class="notice error" role="alert">{{ error }}</div>
+  }
+
+  @if (mostrarFormulario) {
+    <section class="panel form-panel">
+      <div class="panel-heading">
+        <div>
+          <h2>{{ usuarioEditando ? 'Editar usuario' : 'Registrar usuario' }}</h2>
+          <p>Los campos marcados con * son obligatorios.</p>
+        </div>
+
+        <button type="button" class="text-button" (click)="cancelarFormulario()">
+          Cancelar
+        </button>
+      </div>
+
+      <form #usuarioForm="ngForm" (ngSubmit)="guardarUsuario()">
+        <div class="form-grid">
+          <label>
+            Código *
+            <input
+              name="codigo"
+              [(ngModel)]="formulario.codigo"
+              required
+              maxlength="50"
+              placeholder="Ej. USR001">
+          </label>
+
+          <label>
+            Nombre *
+            <input
+              name="nombres"
+              [(ngModel)]="formulario.nombres"
+              required
+              maxlength="100"
+              placeholder="Nombres">
+          </label>
+
+          <label>
+            Apellidos *
+            <input
+              name="apellidos"
+              [(ngModel)]="formulario.apellidos"
+              required
+              maxlength="100"
+              placeholder="Apellidos">
+          </label>
+
+          <label>
+            Nombre de usuario *
+            <input
+              name="username"
+              [(ngModel)]="formulario.username"
+              required
+              maxlength="100"
+              autocomplete="username"
+              placeholder="usuario">
+          </label>
+
+          <label>
+            {{ usuarioEditando ? 'Nueva contraseña (opcional)' : 'Contraseña *' }}
+            <input
+              name="password"
+              [(ngModel)]="formulario.password"
+              [required]="!usuarioEditando"
+              type="password"
+              autocomplete="new-password"
+              placeholder="Contraseña">
+          </label>
+
+          <label>
+            Rol *
+            <select name="rol" [(ngModel)]="formulario.rol" required>
+              @for (rol of roles; track rol.valor) {
+                <option [value]="rol.valor">{{ rol.etiqueta }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="checkbox-field">
+            <input
+              name="activo"
+              type="checkbox"
+              [(ngModel)]="formulario.activo">
+            Cuenta activa
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button
+            class="secondary-button"
+            type="button"
+            (click)="cancelarFormulario()">
+            Cancelar
+          </button>
+
+          <button
+            class="primary-button"
+            type="submit"
+            [disabled]="guardando || usuarioForm.invalid">
+            {{ guardando ? 'Guardando...' : 'Guardar usuario' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+
+  <section class="stats">
+    <article class="stat-card">
+      <span>Total de usuarios</span>
+      <strong>{{ usuarios.length }}</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Activos</span>
+      <strong>{{ usuarios.filter(estaActivo).length }}</strong>
+    </article>
+
+    <article class="stat-card">
+      <span>Inactivos</span>
+      <strong>{{ usuarios.length - usuarios.filter(estaActivo).length }}</strong>
+    </article>
+  </section>
+
+  <section class="panel">
+    <div class="toolbar">
+      <label class="search-field">
+        <span>Buscar</span>
+        <input
+          type="search"
+          [(ngModel)]="busqueda"
+          placeholder="Código, nombre o usuario...">
+      </label>
+
+      <label class="filter-field">
+        <span>Estado</span>
+        <select [(ngModel)]="filtroEstado">
+          <option value="todos">Todos</option>
+          <option value="activos">Activos</option>
+          <option value="inactivos">Inactivos</option>
+        </select>
+      </label>
+
+      <button
+        class="secondary-button refresh-button"
+        type="button"
+        [disabled]="cargando"
+        (click)="cargarUsuarios()">
+        {{ cargando ? 'Actualizando...' : 'Actualizar lista' }}
+      </button>
+    </div>
+
+    @if (cargando) {
+      <p class="empty-state">Cargando usuarios...</p>
+    } @else if (usuariosFiltrados.length === 0) {
+      <p class="empty-state">
+        No hay usuarios que coincidan con la búsqueda.
+      </p>
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Usuario</th>
+              <th>Nombre completo</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (usuario of usuariosFiltrados; track usuario.id) {
+              <tr>
+                <td class="code-cell">{{ usuario.codigo }}</td>
+                <td>{{ usuario.username }}</td>
+                <td>{{ usuario.nombres }} {{ usuario.apellidos }}</td>
+                <td>{{ etiquetaRol(usuario.rol) }}</td>
+
+                <td>
+                  <span
+                    class="status"
+                    [class.active]="usuario.activo"
+                    [class.inactive]="!usuario.activo">
+                    {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+
+                <td>
+                  <div class="actions">
+                    <button
+                      class="text-button"
+                      type="button"
+                      (click)="editarUsuario(usuario)">
+                      Editar
+                    </button>
+
+                    <button
+                      class="text-button"
+                      [class.danger-text]="usuario.activo"
+                      type="button"
+                      (click)="cambiarEstado(usuario)">
+                      {{ usuario.activo ? 'Desactivar' : 'Activar' }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <p class="table-footer">
+        Mostrando {{ usuariosFiltrados.length }} de {{ usuarios.length }} usuarios
+      </p>
+    }
+  </section>
+</section>
