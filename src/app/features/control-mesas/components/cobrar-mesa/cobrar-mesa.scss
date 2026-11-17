@@ -1,0 +1,141 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.65);
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 14px;
+}
+
+.modal-header,
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px;
+}
+
+.modal-header {
+  border-bottom: 1px solid #e2e8f0;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  p {
+    margin: 5px 0 0;
+    color: #64748b;
+  }
+}
+
+.modal-body {
+  padding: 24px;
+
+  h3 {
+    margin-top: 0;
+  }
+}
+
+.btn-close {
+  border: 0;
+  background: transparent;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.resumen-linea,
+.total {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.total {
+  margin: 20px 0;
+  padding: 16px 0;
+  border-top: 1px solid #cbd5e1;
+  font-weight: 700;
+  font-size: 18px;
+
+  strong {
+    color: #16a34a;
+    font-size: 24px;
+  }
+}
+
+.form-group {
+  margin-bottom: 18px;
+
+  label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 600;
+  }
+
+  select {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+  }
+}
+
+.aviso {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.modal-footer {
+  border-top: 1px solid #e2e8f0;
+  justify-content: flex-end;
+
+  button {
+    border: 0;
+    border-radius: 8px;
+    padding: 11px 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+}
+
+.btn-cancelar {
+  background: #f1f5f9;
+}
+
+.btn-confirmar {
+  background: #16a34a;
+  color: white;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+.error-message {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 13px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

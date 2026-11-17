@@ -1,0 +1,240 @@
+<div class="modal-overlay" (click)="cerrar.emit()">
+
+  <div class="modal-content" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div>
+        <h2>{{ mesa.codigo }} · Mesa ocupada</h2>
+        <p>
+          {{ mesa.ubicacion || 'Sin ubicación' }}
+          · {{ mesa.capacidad }} personas
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="btn-close"
+        (click)="cerrar.emit()">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+      <div *ngIf="cargando" class="loading">
+        Cargando información de la atención...
+      </div>
+
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <ng-container *ngIf="atencion && !cargando">
+
+        <div class="atencion-header">
+          <div>
+            <span class="label">Atención</span>
+            <h3>{{ atencion.codigo }}</h3>
+          </div>
+
+          <span class="estado-abierta">
+            {{ atencion.estado }}
+          </span>
+        </div>
+
+        <div class="info-grid">
+
+          <div class="info-item">
+            <span>Cliente</span>
+            <strong>{{ atencion.cliente }}</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Mozo responsable</span>
+            <strong>{{ atencion.mozo }}</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Fecha de apertura</span>
+            <strong>
+              {{ atencion.aperturaEn | date:'dd/MM/yyyy HH:mm' }}
+            </strong>
+          </div>
+
+          <div class="info-item">
+            <span>Estado del pago</span>
+            <strong>{{ atencion.estadoPago }}</strong>
+          </div>
+
+        </div>
+
+        <div class="pedidos-section">
+
+          <h3>Pedidos de la mesa</h3>
+
+          <!-- Cargando -->
+          <div *ngIf="cargandoPedidos" class="loading">
+            Cargando pedidos...
+          </div>
+
+          <!-- Error -->
+          <div *ngIf="errorPedidos" class="error-message">
+            {{ errorPedidos }}
+
+            <button
+              type="button"
+              (click)="cargarPedidos()">
+              Reintentar
+            </button>
+          </div>
+
+          <!-- Sin pedidos -->
+          <div
+            *ngIf="!cargandoPedidos && !errorPedidos && pedidos.length === 0"
+            class="sin-pedidos">
+            Todavía no se han registrado pedidos para esta atención.
+          </div>
+
+          <!-- Pedidos registrados -->
+          <ng-container *ngIf="!cargandoPedidos && !errorPedidos">
+
+            <div
+              *ngFor="let pedido of pedidos"
+              class="pedido-card">
+
+              <div class="pedido-header">
+
+                <div>
+                  <strong>{{ pedido.codigo }}</strong>
+
+                  <small>
+                    {{ pedido.creadoEn | date:'dd/MM/yyyy HH:mm' }}
+                  </small>
+                </div>
+
+                <span class="pedido-estado">
+                  {{ pedido.estado }}
+                </span>
+
+              </div>
+
+              <div class="pedido-detalles">
+
+                <div
+                  *ngFor="let detalle of pedido.detalles"
+                  class="pedido-detalle">
+
+                  <div class="detalle-descripcion">
+                    <strong>{{ detalle.plato }}</strong>
+
+                    <small>
+                      {{ detalle.cantidad }} ×
+                      S/ {{ detalle.precioUnitario | number:'1.2-2' }}
+                    </small>
+
+                    <small>
+                      Cocina: {{ detalle.estadoCocina }}
+                    </small>
+                  </div>
+
+                  <strong class="detalle-subtotal">
+                    S/ {{ detalle.subtotal | number:'1.2-2' }}
+                  </strong>
+
+                </div>
+
+              </div>
+
+              <div class="pedido-total">
+                <span>Subtotal del pedido</span>
+
+                <strong>
+                  S/ {{ pedido.total | number:'1.2-2' }}
+                </strong>
+              </div>
+
+            </div>
+
+            <!-- Resumen general -->
+            <div *ngIf="pedidos.length > 0" class="resumen-mesa">
+
+              <div class="resumen-linea">
+                <span>Pedidos registrados</span>
+                <strong>{{ pedidos.length }}</strong>
+              </div>
+
+              <div class="resumen-linea">
+                <span>Platos solicitados</span>
+                <strong>{{ cantidadPlatos }}</strong>
+              </div>
+
+              <div class="resumen-total">
+                <span>Total de la mesa</span>
+
+                <strong>
+                  S/ {{ totalMesa | number:'1.2-2' }}
+                </strong>
+              </div>
+
+            </div>
+
+          </ng-container>
+
+        </div>
+
+      </ng-container>
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="btn-cancelar"
+        (click)="cerrar.emit()">
+        Cerrar ventana
+      </button>
+
+      <button
+        type="button"
+        class="btn-agregar"
+        [disabled]="!atencion || cargando"
+        (click)="abrirAgregarPlatos()">
+        Añadir platos
+      </button>
+
+      <button
+        type="button"
+        class="btn-cobrar"
+        [disabled]="
+          !atencion ||
+          cargando ||
+          cargandoPedidos ||
+          !!errorPedidos ||
+          pedidos.length === 0 ||
+          totalMesa <= 0
+        "
+        (click)="abrirCobrarMesa()">
+        Cobrar mesa
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+<app-agregar-platos
+  *ngIf="mostrarAgregarPlatos && atencion"
+  [idAtencion]="atencion.id"
+  [codigoMesa]="mesa.codigo"
+  (cerrar)="mostrarAgregarPlatos = false"
+  (guardado)="pedidoRegistrado()">
+</app-agregar-platos>
+<app-cobrar-mesa
+  *ngIf="mostrarCobrarMesa && atencion"
+  [atencion]="atencion"
+  [codigoMesa]="mesa.codigo"
+  [totalMesa]="totalMesa"
+  (cerrar)="mostrarCobrarMesa = false"
+  (cobroRealizado)="cobroConfirmado($event)">
+</app-cobrar-mesa>

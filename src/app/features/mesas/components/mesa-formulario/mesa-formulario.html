@@ -1,0 +1,90 @@
+
+<form (ngSubmit)="guardar()" #mesaForm="ngForm">
+
+  <h3>
+    {{ mesa ? 'Editar Mesa' : 'Nueva Mesa' }}
+  </h3>
+
+  <p class="subtitle">
+    Completa los datos de la mesa.
+  </p>
+
+  <div *ngIf="error" class="form-error">
+    {{ error }}
+  </div>
+
+  <div class="form-group">
+    <label for="codigo">Código *</label>
+    <input
+      id="codigo"
+      type="text"
+      name="codigo"
+      [(ngModel)]="formulario.codigo"
+      maxlength="20"
+      required
+      placeholder="Ej. M-018">
+  </div>
+
+  <div class="form-group">
+    <label for="capacidad">Capacidad *</label>
+    <input
+      id="capacidad"
+      type="number"
+      name="capacidad"
+      [(ngModel)]="formulario.capacidad"
+      min="1"
+      step="1"
+      required>
+  </div>
+
+  <div class="form-group">
+    <label for="ubicacion">Ubicación</label>
+    <input
+      id="ubicacion"
+      type="text"
+      name="ubicacion"
+      [(ngModel)]="formulario.ubicacion"
+      maxlength="100"
+      placeholder="Ej. Terraza">
+  </div>
+
+  <div class="form-group">
+    <label for="estado">Estado operativo</label>
+    <select
+      id="estado"
+      name="estado"
+      [(ngModel)]="formulario.estado">
+      <option value="Disponible">Disponible</option>
+      <option value="Ocupada">Ocupada</option>
+      <option value="Reservada">Reservada</option>
+      <option value="Mantenimiento">Mantenimiento</option>
+    </select>
+  </div>
+
+  <div class="checkbox-group">
+    <input
+      id="activa"
+      type="checkbox"
+      name="activa"
+      [(ngModel)]="formulario.activa">
+    <label for="activa">Mesa activa</label>
+  </div>
+
+  <div class="form-actions">
+    <button
+      type="button"
+      class="btn-cancel"
+      [disabled]="guardando"
+      (click)="cancelar()">
+      Cancelar
+    </button>
+
+    <button
+      type="submit"
+      class="btn-save"
+      [disabled]="guardando || mesaForm.invalid">
+      {{ guardando ? 'Guardando...' : 'Guardar' }}
+    </button>
+  </div>
+
+</form>

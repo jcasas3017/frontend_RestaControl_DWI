@@ -1,0 +1,59 @@
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.app-layout {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+  width: 100%;
+  background: #f4f7fb;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+/* Componente Angular del menú lateral */
+app-sidebar {
+  display: flex;
+  flex: 0 0 250px;
+  width: 250px;
+  min-width: 250px;
+  align-self: stretch;
+  background: #172d3e;
+}
+
+/* Contenedor principal */
+.app-content {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Contenido de los módulos */
+.page-content {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+/* Diseño responsive */
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  app-sidebar {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .page-content {
+    padding: 16px;
+  }
+}

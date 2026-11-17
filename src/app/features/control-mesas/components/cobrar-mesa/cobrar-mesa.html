@@ -1,0 +1,103 @@
+<div
+  class="modal-overlay"
+  (click)="!procesando && cerrar.emit()">
+
+  <div class="modal-content" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div>
+        <h2>Cobrar mesa {{ codigoMesa }}</h2>
+        <p>
+          {{ atencion.codigo }} · {{ atencion.cliente }}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="btn-close"
+        [disabled]="procesando"
+        (click)="cerrar.emit()">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+      <h3>Resumen del cobro</h3>
+
+      <div class="resumen-linea">
+        <span>Subtotal sin IGV</span>
+        <strong>S/ {{ subtotal | number:'1.2-2' }}</strong>
+      </div>
+
+      <div class="resumen-linea">
+        <span>IGV (18%)</span>
+        <strong>S/ {{ igv | number:'1.2-2' }}</strong>
+      </div>
+
+      <div class="total">
+        <span>Total a cobrar</span>
+        <strong>S/ {{ totalMesa | number:'1.2-2' }}</strong>
+      </div>
+
+      <div class="form-group">
+        <label for="tipoComprobante">Tipo de comprobante</label>
+
+        <select
+          id="tipoComprobante"
+          [(ngModel)]="tipoComprobante">
+
+          <option value="Boleta">Boleta</option>
+          <option value="Factura">Factura</option>
+
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="metodoPago">Método de pago</label>
+
+        <select
+          id="metodoPago"
+          [(ngModel)]="metodoPago">
+
+          <option value="Efectivo">Efectivo</option>
+          <option value="Yape">Yape</option>
+          <option value="Plin">Plin</option>
+          <option value="Tarjeta">Tarjeta</option>
+
+        </select>
+      </div>
+
+      <p class="aviso">
+        Vista previa del cobro. El importe definitivo
+        será calculado por el backend.
+      </p>
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button
+        type="button"
+        class="btn-cancelar"
+        [disabled]="procesando"
+        (click)="cerrar.emit()">
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        class="btn-confirmar"
+        [disabled]="procesando || totalMesa <= 0"
+        (click)="confirmarCobro()">
+        {{ procesando ? 'Procesando cobro...' : 'Confirmar cobro' }}
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

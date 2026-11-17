@@ -1,0 +1,150 @@
+<div class="control-mesas">
+
+  <div class="page-header">
+    <div>
+      <h2>Control de Mesas</h2>
+      <p>Consulta la disponibilidad según fecha y hora.</p>
+    </div>
+  </div>
+
+  <div class="filtros">
+    <div class="campo">
+      <label for="fecha">Fecha</label>
+      <input
+        id="fecha"
+        type="date"
+        [(ngModel)]="fecha"
+        (change)="consultar()"
+      />
+    </div>
+
+    <div class="campo">
+      <label for="hora">Hora</label>
+      <input
+        id="hora"
+        type="time"
+        [(ngModel)]="hora"
+        (change)="consultar()"
+      />
+    </div>
+
+    <button
+      type="button"
+      class="btn-consultar"
+      [disabled]="cargando"
+      (click)="consultar()"
+    >
+      {{ cargando ? 'Consultando...' : 'Consultar' }}
+    </button>
+  </div>
+
+  <!-- Confirmación del cobro -->
+  <div
+    *ngIf="ultimoComprobante"
+    class="cobro-exitoso">
+
+    <div>
+      <strong>¡Cobro registrado correctamente!</strong>
+
+      <p>
+        Comprobante:
+        {{ ultimoComprobante.numeroComprobante }}
+      </p>
+
+      <p>
+        Total pagado:
+        S/ {{ ultimoComprobante.montoTotal | number:'1.2-2' }}
+      </p>
+
+      <p>
+        Método de pago:
+        {{ ultimoComprobante.metodoPago }}
+      </p>
+    </div>
+
+    <button
+      type="button"
+      (click)="ultimoComprobante = null">
+      Cerrar
+    </button>
+
+  </div>
+  <div class="resumen">
+    <div class="resumen-item disponible">
+      <strong>{{ contar('DISPONIBLE') }}</strong>
+      <span>Disponibles</span>
+    </div>
+
+    <div class="resumen-item ocupada">
+      <strong>{{ contar('OCUPADA') }}</strong>
+      <span>Ocupadas</span>
+    </div>
+
+    <div class="resumen-item reservada">
+      <strong>{{ contar('RESERVADA') }}</strong>
+      <span>Reservadas</span>
+    </div>
+
+    <div class="resumen-item no-disponible">
+      <strong>{{ contar('NO_DISPONIBLE') }}</strong>
+      <span>No disponibles</span>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="mensaje-error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="cargando" class="mensaje">
+    Cargando mesas...
+  </div>
+
+  <div *ngIf="!cargando && !error" class="mesas-grid">
+
+    <button
+      type="button"
+      *ngFor="let mesa of mesas"
+      class="mesa-card"
+      [ngClass]="claseEstado(mesa.estadoVisual)"
+      (click)="seleccionarMesa(mesa)"
+    >
+      <div class="mesa-icono">
+        <span>▣</span>
+      </div>
+
+      <strong>{{ mesa.codigo }}</strong>
+
+      <span class="mesa-estado">
+        {{ nombreEstado(mesa.estadoVisual) }}
+      </span>
+
+      <small>{{ mesa.capacidad }} personas</small>
+
+      <small *ngIf="mesa.ubicacion">
+        {{ mesa.ubicacion }}
+      </small>
+    </button>
+
+  </div>
+
+  <p
+    *ngIf="!cargando && !error && mesas.length === 0"
+    class="mensaje"
+  >
+    No se encontraron mesas.
+  </p>
+
+</div>
+
+<app-ocupar-mesa
+  *ngIf="mesaSeleccionada"
+  [mesa]="mesaSeleccionada"
+  (cerrar)="cerrarModal()"
+  (guardado)="atencionRegistrada()">
+</app-ocupar-mesa>
+<app-mesa-ocupada
+  *ngIf="mesaOcupadaSeleccionada"
+  [mesa]="mesaOcupadaSeleccionada"
+  (cerrar)="cerrarMesaOcupada()"
+  (cobrado)="mesaCobrada($event)">
+</app-mesa-ocupada>
