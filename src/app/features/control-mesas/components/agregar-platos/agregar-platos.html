@@ -1,0 +1,123 @@
+<div class="modal-overlay" (click)="cerrar.emit()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div>
+        <h2>Nuevo pedido · {{ codigoMesa }}</h2>
+        <p>Selecciona los platos para esta atención.</p>
+      </div>
+
+      <button type="button" class="btn-close"
+              (click)="cerrar.emit()">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <p *ngIf="cargando">Cargando platos...</p>
+
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group plato-field">
+          <label>Plato</label>
+          <select [(ngModel)]="idPlatoSeleccionado"
+                  [disabled]="guardando">
+            <option value="">Seleccione un plato</option>
+
+            <option *ngFor="let plato of platos"
+                    [value]="plato.id">
+              {{ plato.nombre }} · S/ {{ plato.precio | number:'1.2-2' }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group cantidad-field">
+          <label>Cantidad</label>
+          <input type="number" min="1" step="1"
+                 [(ngModel)]="cantidad"
+                 [disabled]="guardando">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Observaciones del plato</label>
+        <input type="text"
+               [(ngModel)]="observaciones"
+               placeholder="Ejemplo: Sin cebolla"
+               [disabled]="guardando">
+      </div>
+
+      <button type="button"
+              class="btn-agregar"
+              (click)="agregar()"
+              [disabled]="guardando || cargando">
+        + Agregar al pedido
+      </button>
+
+      <div class="detalle-section">
+        <h3>Detalle del pedido</h3>
+
+        <p *ngIf="items.length === 0" class="sin-items">
+          Todavía no agregaste platos.
+        </p>
+
+        <div *ngFor="let item of items; let i = index"
+             class="detalle-item">
+          <div>
+            <strong>{{ item.nombre }}</strong>
+            <small>
+              {{ item.cantidad }} ×
+              S/ {{ item.precio | number:'1.2-2' }}
+            </small>
+            <small *ngIf="item.observaciones">
+              {{ item.observaciones }}
+            </small>
+          </div>
+
+          <div class="detalle-acciones">
+            <strong>
+              S/ {{ subtotal(item) | number:'1.2-2' }}
+            </strong>
+
+            <button type="button"
+                    (click)="quitar(i)"
+                    [disabled]="guardando">
+              Quitar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Notas generales del pedido</label>
+        <textarea rows="2"
+                  [(ngModel)]="notas"
+                  placeholder="Observaciones generales"
+                  [disabled]="guardando"></textarea>
+      </div>
+
+      <div class="total">
+        <span>Total estimado</span>
+        <strong>S/ {{ total | number:'1.2-2' }}</strong>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-cancelar"
+              (click)="cerrar.emit()"
+              [disabled]="guardando">
+        Cancelar
+      </button>
+
+      <button type="button" class="btn-guardar"
+              (click)="registrarPedido()"
+              [disabled]="guardando || items.length === 0">
+        {{ guardando ? 'Registrando...' : 'Registrar pedido' }}
+      </button>
+    </div>
+
+  </div>
+</div>

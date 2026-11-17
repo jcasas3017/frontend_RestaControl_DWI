@@ -1,0 +1,145 @@
+
+<section class="platos-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Gestión de Platos</h1>
+      <p>Administra los platos del restaurante.</p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="btn-refresh"
+        (click)="cargarDatos()"
+        [disabled]="cargando"
+      >
+        Actualizar
+      </button>
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="nuevoPlato()"
+      >
+        + Nuevo plato
+      </button>
+    </div>
+  </div>
+
+  @if (mensajeExito) {
+    <p class="message success">{{ mensajeExito }}</p>
+  }
+
+  @if (errorMessage && !mostrarFormulario) {
+    <p class="message error">{{ errorMessage }}</p>
+  }
+
+  @if (cargando) {
+    <p class="message">Cargando platos...</p>
+  }
+
+  @if (!cargando && !errorMessage) {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Disponible</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (plato of platos; track plato.id) {
+            <tr>
+              <td>{{ plato.codigo }}</td>
+              <td>{{ plato.nombre }}</td>
+              <td>{{ obtenerNombreCategoria(plato.idCategoria) }}</td>
+              <td>S/ {{ plato.precio.toFixed(2) }}</td>
+
+              <td>
+                <span
+                  class="status"
+                  [class.active]="plato.disponible"
+                  [class.inactive]="!plato.disponible"
+                >
+                  {{ plato.disponible ? 'Sí' : 'No' }}
+                </span>
+              </td>
+
+              <td>
+                <span
+                  class="status"
+                  [class.active]="plato.activo"
+                  [class.inactive]="!plato.activo"
+                >
+                  {{ plato.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+
+
+              <td>
+                <div class="row-actions">
+                  <button
+                    type="button"
+                    class="btn-edit"
+                    (click)="editarPlato(plato)"
+                    [disabled]="guardando"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-state"
+                    [class.inactive]="plato.activo"
+                    [disabled]="guardando"
+                    (click)="cambiarEstadoPlato(plato)"
+                  >
+                    {{ plato.activo ? 'Inactivar' : 'Activar' }}
+                  </button>
+                </div>
+              </td>
+
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty">
+                No existen platos registrados.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</section>
+
+@if (mostrarFormulario) {
+  <div class="modal-overlay">
+    <div
+      class="modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Formulario de plato"
+    >
+      <app-plato-formulario
+        [plato]="platoSeleccionado"
+        [categorias]="categorias"
+        [guardando]="guardando"
+        (guardar)="guardarPlato($event)"
+        (cancelar)="cerrarFormulario()"
+      />
+
+      @if (errorMessage) {
+        <p class="message error">{{ errorMessage }}</p>
+      }
+    </div>
+  </div>
+}

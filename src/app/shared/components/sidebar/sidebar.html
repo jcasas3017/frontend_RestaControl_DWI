@@ -1,0 +1,80 @@
+
+<aside class="sidebar">
+
+  <div class="sidebar-logo">
+    <span class="logo-icon">🍽️</span>
+    <h2>RestaControl</h2>
+  </div>
+
+  <div class="menu-title">MENÚ PRINCIPAL</div>
+
+  <nav class="menu">
+
+    <a
+      routerLink="/inicio"
+      routerLinkActive="active"
+      class="menu-item"
+    >
+      <span>🏠</span> Inicio
+    </a>
+
+    <a
+      routerLink="/categorias"
+      routerLinkActive="active"
+      class="menu-item"
+    >
+      <span>📂</span> Categorías
+    </a>
+
+    <a
+      routerLink="/platos"
+      routerLinkActive="active"
+      class="menu-item"
+    >
+      <span>🍲</span> Platos
+    </a>
+
+    <a
+      routerLink="/clientes"
+      routerLinkActive="active"
+      class="menu-item"
+    >
+      <span>👥</span> Clientes
+    </a>
+
+
+    <a
+      routerLink="/mesas"
+      routerLinkActive="active"
+      class="menu-item"
+    >
+      <span>🪑</span> Mesas
+    </a>
+
+
+
+    <a
+      routerLink="/usuarios"
+      routerLinkActive="active"
+      class="menu-item"
+    >
+      <span>👤</span> Usuarios
+    </a>
+    <a
+      routerLink="/control-mesas"
+      routerLinkActive="active"
+      class="menu-item"
+    >
+      <span>🗺️</span> Control de Mesas
+    </a>
+
+
+  </nav>
+
+  <div class="sidebar-footer">
+    <button type="button" (click)="cerrarSesion()">
+      🚪 Cerrar sesión
+    </button>
+  </div>
+
+</aside>

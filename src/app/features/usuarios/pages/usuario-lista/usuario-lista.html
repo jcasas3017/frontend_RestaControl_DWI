@@ -1,0 +1,175 @@
+<div class="usuarios-page">
+
+  <div class="page-header">
+    <div>
+      <h2>Gestión de Usuarios</h2>
+      <p>Administración de usuarios del restaurante</p>
+    </div>
+
+
+    <div class="header-actions">
+
+      <button
+        type="button"
+        class="btn-refresh"
+        [disabled]="cargando"
+        (click)="cargarUsuarios()">
+        Actualizar
+      </button>
+
+      <button
+        type="button"
+        class="btn-new"
+        (click)="nuevoUsuario()">
+        + Nuevo Usuario
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="summary">
+    <div class="summary-item">
+      <span>Total de usuarios</span>
+      <strong>{{ totalUsuarios }}</strong>
+    </div>
+
+    <div class="summary-item">
+      <span>Activos</span>
+      <strong class="text-success">{{ usuariosActivos }}</strong>
+    </div>
+
+    <div class="summary-item">
+      <span>Inactivos</span>
+      <strong class="text-danger">{{ usuariosInactivos }}</strong>
+    </div>
+  </div>
+
+  <div *ngIf="mensaje" class="alert success">
+    {{ mensaje }}
+  </div>
+
+  <div *ngIf="error" class="alert error">
+    {{ error }}
+  </div>
+
+
+<div class="search-container">
+  <div class="search-box">
+    <span class="search-icon">⌕</span>
+
+    <input
+      type="text"
+      aria-label="Buscar usuarios"
+      placeholder="Buscar por código, nombre, usuario o rol..."
+      [value]="busqueda"
+      (input)="actualizarBusqueda($any($event.target).value)"
+    />
+
+    <button
+      *ngIf="busqueda"
+      type="button"
+      class="btn-clear"
+      title="Limpiar búsqueda"
+      (click)="actualizarBusqueda('')">
+      ✕
+    </button>
+  </div>
+</div>
+
+
+  <div *ngIf="cargando" class="loading">
+    Cargando usuarios...
+  </div>
+
+  <div class="table-container" *ngIf="!cargando">
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nombres</th>
+          <th>Apellidos</th>
+          <th>Usuario</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let usuario of usuariosFiltrados">
+          <td><strong>{{ usuario.codigo }}</strong></td>
+          <td>{{ usuario.nombres }}</td>
+          <td>{{ usuario.apellidos }}</td>
+          <td>{{ usuario.username }}</td>
+          <td>{{ usuario.rol }}</td>
+
+          <td>
+            <span
+              class="status"
+              [class.active]="usuario.activo"
+              [class.inactive]="!usuario.activo">
+              {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+
+          <td>
+            <div class="actions">
+              <button
+                type="button"
+                class="btn-edit"
+                [disabled]="procesandoId !== null"
+                (click)="editarUsuario(usuario)">
+                Editar
+              </button>
+              <button
+                type="button"
+                class="btn-state"
+                [class.deactivate]="usuario.activo"
+                [class.activate]="!usuario.activo"
+                [disabled]="procesandoId !== null"
+                (click)="cambiarEstado(usuario)">
+                {{
+                  procesandoId === usuario.id
+                    ? 'Procesando...'
+                    : usuario.activo
+                      ? 'Inactivar'
+                      : 'Activar'
+                }}
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="usuariosFiltrados.length === 0">
+          <td colspan="7" class="empty">
+            No se encontraron usuarios.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+<!-- Modal de registro / edición -->
+<div
+  class="modal-overlay"
+  *ngIf="mostrarFormulario"
+  (click)="cerrarFormulario()">
+
+  <div
+    class="modal-content"
+    role="dialog"
+    aria-modal="true"
+    (click)="$event.stopPropagation()">
+
+    <app-usuario-formulario
+      [usuario]="usuarioSeleccionado"
+      (cerrar)="cerrarFormulario()"
+      (guardado)="usuarioGuardado()">
+    </app-usuario-formulario>
+
+  </div>
+</div>
+
+</div>

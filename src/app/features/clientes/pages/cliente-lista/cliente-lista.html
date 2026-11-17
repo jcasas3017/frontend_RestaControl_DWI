@@ -1,0 +1,139 @@
+
+<section class="clientes-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Gestión de Clientes</h1>
+      <p>Consulta y administra los clientes del restaurante.</p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="btn-refresh"
+        (click)="cargarClientes()"
+        [disabled]="cargando"
+      >
+        Actualizar
+      </button>
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="nuevoCliente()"
+      >
+        + Nuevo cliente
+      </button>
+    </div>
+  </div>
+
+  @if (mensajeExito) {
+    <p class="message success">{{ mensajeExito }}</p>
+  }
+
+  @if (errorMessage && !mostrarFormulario) {
+    <p class="message error">{{ errorMessage }}</p>
+  }
+
+  @if (cargando) {
+    <p class="message">Cargando clientes...</p>
+  }
+
+  @if (!cargando && !errorMessage) {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Documento</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (cliente of clientes; track cliente.id) {
+            <tr>
+              <td>{{ cliente.codigo }}</td>
+              <td>{{ cliente.nombres }}</td>
+              <td>{{ cliente.apellidos }}</td>
+              <td>{{ cliente.documento }}</td>
+              <td>{{ cliente.telefono || '-' }}</td>
+              <td>{{ cliente.email || '-' }}</td>
+
+              <td>
+                <span
+                  class="status"
+                  [class.active]="cliente.activo"
+                  [class.inactive]="!cliente.activo"
+                >
+                  {{ cliente.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+
+
+              <td>
+                <div class="row-actions">
+
+                  <button
+                    type="button"
+                    class="btn-edit"
+                    [disabled]="guardando"
+                    (click)="editarCliente(cliente)"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-state"
+                    [class.inactive]="cliente.activo"
+                    [disabled]="guardando"
+                    (click)="cambiarEstadoCliente(cliente)"
+                  >
+                    {{ cliente.activo ? 'Inactivar' : 'Activar' }}
+                  </button>
+
+                </div>
+              </td>
+
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="empty">
+                No existen clientes registrados.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</section>
+
+@if (mostrarFormulario) {
+  <div class="modal-overlay">
+    <div
+      class="modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Formulario de cliente"
+    >
+      <app-cliente-formulario
+        [cliente]="clienteSeleccionado"
+        [guardando]="guardando"
+        (guardar)="guardarCliente($event)"
+        (cancelar)="cerrarFormulario()"
+      />
+
+      @if (errorMessage) {
+        <p class="message error">{{ errorMessage }}</p>
+      }
+    </div>
+  </div>
+}

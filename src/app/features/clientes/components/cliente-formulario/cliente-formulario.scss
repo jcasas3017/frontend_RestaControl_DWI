@@ -1,0 +1,112 @@
+
+.formulario-container {
+  width: 100%;
+  font-family: Arial, sans-serif;
+
+  h2 {
+    margin: 0 0 8px;
+    color: #18384b;
+    font-size: 22px;
+  }
+}
+
+.formulario-subtitulo {
+  margin: 0 0 24px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 18px;
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #334155;
+    background: white;
+    outline: none;
+
+    &:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+  padding-top: 18px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn-cancelar,
+.btn-guardar {
+  padding: 11px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-cancelar {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+
+  &:hover:not(:disabled) {
+    background: #e2e8f0;
+  }
+}
+
+.btn-guardar {
+  background: #15803d;
+  color: white;
+  border: 1px solid #15803d;
+
+  &:hover:not(:disabled) {
+    background: #166534;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .btn-cancelar,
+  .btn-guardar {
+    width: 100%;
+  }
+}

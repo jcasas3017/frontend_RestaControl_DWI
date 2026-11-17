@@ -1,0 +1,194 @@
+
+<div class="mesas-page">
+
+  <!-- Encabezado -->
+  <div class="page-header">
+
+    <div>
+      <h2>Gestión de Mesas</h2>
+      <p>Administración de mesas del restaurante</p>
+    </div>
+
+    <div class="header-actions">
+
+      <button
+        type="button"
+        class="btn-refresh"
+        [disabled]="cargando"
+        (click)="cargarMesas()">
+        Actualizar
+      </button>
+
+      <button
+        type="button"
+        class="btn-new"
+        (click)="nuevaMesa()">
+        + Nueva Mesa
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Resumen -->
+  <div class="summary">
+
+    <div class="summary-item">
+      <span>Total de mesas</span>
+      <strong>{{ totalMesas }}</strong>
+    </div>
+
+    <div class="summary-item">
+      <span>Activas</span>
+      <strong class="text-success">
+        {{ mesasActivas }}
+      </strong>
+    </div>
+
+    <div class="summary-item">
+      <span>Inactivas</span>
+      <strong class="text-danger">
+        {{ mesasInactivas }}
+      </strong>
+    </div>
+
+  </div>
+
+  <!-- Mensajes -->
+  <div *ngIf="mensaje" class="alert success">
+    {{ mensaje }}
+  </div>
+
+  <div *ngIf="error" class="alert error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="cargando" class="loading">
+    Cargando mesas...
+  </div>
+
+  <!-- Tabla -->
+  <div
+    class="table-container"
+    *ngIf="!cargando">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Capacidad</th>
+          <th>Ubicación</th>
+          <th>Estado operativo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let mesa of mesas">
+
+          <td>
+            <strong>{{ mesa.codigo }}</strong>
+          </td>
+
+          <td>
+            {{ mesa.capacidad }} personas
+          </td>
+
+          <td>
+            {{ mesa.ubicacion || '-' }}
+          </td>
+
+          <td>
+            <span class="operational-status">
+              {{ mesa.estado }}
+            </span>
+          </td>
+
+          <td>
+            <span
+              class="status"
+              [class.active]="mesa.activa"
+              [class.inactive]="!mesa.activa">
+
+              {{ mesa.activa ? 'Activa' : 'Inactiva' }}
+
+            </span>
+          </td>
+
+          <td>
+
+            <div class="actions">
+
+              <!-- Editar -->
+              <button
+                type="button"
+                class="btn-edit"
+                [disabled]="procesandoId !== null"
+                (click)="editarMesa(mesa)">
+                Editar
+              </button>
+
+              <!-- Activar / Inactivar -->
+              <button
+                type="button"
+                class="btn-state"
+                [class.deactivate]="mesa.activa"
+                [class.activate]="!mesa.activa"
+                [disabled]="procesandoId !== null"
+                (click)="cambiarEstado(mesa)">
+
+                {{
+                  procesandoId === mesa.id
+                    ? 'Procesando...'
+                    : mesa.activa
+                      ? 'Inactivar'
+                      : 'Activar'
+                }}
+
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+        <!-- Sin registros -->
+        <tr *ngIf="mesas.length === 0">
+          <td colspan="6" class="empty">
+            No hay mesas registradas.
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+
+  <!-- Modal de registro / edición -->
+  <div
+    class="modal-overlay"
+    *ngIf="mostrarFormulario"
+    (click)="cerrarFormulario()">
+
+    <div
+      class="modal-content"
+      role="dialog"
+      aria-modal="true"
+      (click)="$event.stopPropagation()">
+
+      <app-mesa-formulario
+        [mesa]="mesaSeleccionada"
+        (cerrar)="cerrarFormulario()"
+        (guardado)="mesaGuardada()">
+      </app-mesa-formulario>
+
+    </div>
+  </div>
+
+
+</div>

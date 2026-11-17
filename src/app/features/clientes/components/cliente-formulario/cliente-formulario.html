@@ -1,0 +1,114 @@
+
+<div class="formulario-container">
+
+  <h2>
+    {{ cliente ? 'Editar cliente' : 'Registrar cliente' }}
+  </h2>
+
+  <p class="formulario-subtitulo">
+    Completa los datos del cliente.
+  </p>
+
+  <form
+    #clienteForm="ngForm"
+    (ngSubmit)="enviarFormulario()"
+  >
+
+    <div class="form-group">
+      <label for="nombres">Nombres *</label>
+      <input
+        id="nombres"
+        type="text"
+        name="nombres"
+        [(ngModel)]="formulario.nombres"
+        required
+        maxlength="100"
+        placeholder="Ingrese los nombres"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="apellidos">Apellidos *</label>
+      <input
+        id="apellidos"
+        type="text"
+        name="apellidos"
+        [(ngModel)]="formulario.apellidos"
+        required
+        maxlength="100"
+        placeholder="Ingrese los apellidos"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="documento">Documento *</label>
+      <input
+        id="documento"
+        type="text"
+        name="documento"
+        [(ngModel)]="formulario.documento"
+        required
+        maxlength="20"
+        placeholder="DNI o documento de identidad"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="telefono">Teléfono</label>
+      <input
+        id="telefono"
+        type="tel"
+        name="telefono"
+        [(ngModel)]="formulario.telefono"
+        maxlength="20"
+        placeholder="Ingrese el teléfono"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Correo electrónico</label>
+      <input
+        id="email"
+        type="email"
+        name="email"
+        [(ngModel)]="formulario.email"
+        email
+        maxlength="150"
+        placeholder="ejemplo@correo.com"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="direccion">Dirección</label>
+      <textarea
+        id="direccion"
+        name="direccion"
+        [(ngModel)]="formulario.direccion"
+        rows="3"
+        maxlength="250"
+        placeholder="Ingrese la dirección"
+      ></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn-cancelar"
+        (click)="cancelarFormulario()"
+        [disabled]="guardando"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="submit"
+        class="btn-guardar"
+        [disabled]="clienteForm.invalid || guardando"
+      >
+        {{ guardando ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </div>
+
+  </form>
+
+</div>

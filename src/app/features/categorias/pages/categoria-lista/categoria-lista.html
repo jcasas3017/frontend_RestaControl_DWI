@@ -1,0 +1,114 @@
+
+<section class="categorias-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Gestión de Categorías</h1>
+      <p>Administra las categorías del restaurante.</p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="btn-refresh"
+        (click)="cargarCategorias()"
+        [disabled]="cargando"
+      >
+        Actualizar
+      </button>
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="nuevaCategoria()"
+      >
+        + Nueva categoría
+      </button>
+    </div>
+  </div>
+
+  @if (mensajeExito) {
+    <p class="message success">{{ mensajeExito }}</p>
+  }
+
+  @if (errorMessage && !mostrarFormulario) {
+    <p class="message error">{{ errorMessage }}</p>
+  }
+
+  @if (cargando) {
+    <p class="message">Cargando categorías...</p>
+  }
+
+  @if (!cargando) {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Orden</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (categoria of categorias; track categoria.id) {
+            <tr>
+              <td>{{ categoria.codigo }}</td>
+              <td>{{ categoria.nombre }}</td>
+              <td>{{ categoria.orden }}</td>
+              <td>
+                <span
+                  class="status"
+                  [class.active]="categoria.activo"
+                  [class.inactive]="!categoria.activo"
+                >
+                  {{ categoria.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="btn-edit"
+                  (click)="editarCategoria(categoria)"
+                >
+                  Editar
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty">
+                No existen categorías registradas.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</section>
+
+@if (mostrarFormulario) {
+  <div class="modal-overlay">
+    <div
+      class="modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Formulario de categoría"
+    >
+      <app-categoria-formulario
+        [categoria]="categoriaSeleccionada"
+        [guardando]="guardando"
+        (guardar)="guardarCategoria($event)"
+        (cancelar)="cerrarFormulario()"
+      />
+
+      @if (errorMessage) {
+        <p class="message error">{{ errorMessage }}</p>
+      }
+    </div>
+  </div>
+}
